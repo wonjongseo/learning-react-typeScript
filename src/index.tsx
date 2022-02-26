@@ -3,12 +3,12 @@ import ReactDOM from "react-dom";
 import {ThemeProvider} from "styled-components";
 
 import App from "./App";
-import {dartTheme} from "./theme";
+import {theme} from "./theme";
 //npm install --save typescript @types/node @types/react @types/react-dom @types/jest
 
 ReactDOM.render(
     <React.StrictMode>
-        <ThemeProvider theme={dartTheme}>
+        <ThemeProvider theme={theme}>
             <App />
         </ThemeProvider>
     </React.StrictMode>,
