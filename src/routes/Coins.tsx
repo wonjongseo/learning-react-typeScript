@@ -22,13 +22,20 @@ const Coin = styled.li`
     a {
         padding: 20px;
         transition: color 0.2s ease-in;
-        display: block;
+
+        display: flex;
+        align-items: center;
     }
     &:hover {
         a {
             color: ${(props) => props.theme.accentColor};
         }
     }
+`;
+const Img = styled.img`
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
 `;
 const Title = styled.h1`
     font-size: 48px;
@@ -76,7 +83,29 @@ function Coins() {
                 <CoinsList>
                     {coins.map((coin) => (
                         <Coin key={coin.id}>
-                            <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+                            <Link
+                                to={{
+                                    pathname: `/${coin.id}`,
+                                    state: {name: coin.name},
+                                }}
+                                /*
+                                react-router-dom 6.0.0버전 이상 
+                                <Link to={} state={} >
+
+                                react-router-dom 6.0.0버전 이상 제네릭 지원 안함.
+                                interface RouterState {
+                                    name: string;
+                                }
+
+                                const location = useLocation();
+                                const name = location.state as RouterState;
+                                */
+                            >
+                                <Img
+                                    src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                                />
+                                {coin.name} &rarr;
+                            </Link>
                         </Coin>
                     ))}
                 </CoinsList>
