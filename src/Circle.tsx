@@ -14,6 +14,7 @@ const Container = styled.div<ContainerProps>`
     border-radius: 100px;
     border: 5px solid ${(props) => props.borderColor};
 `;
+
 interface CircleProps {
     bgColor: string;
     // ? ==  optional
