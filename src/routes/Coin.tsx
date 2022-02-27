@@ -1,36 +1,40 @@
-import {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {
-    Link,
-    Route,
     Switch,
+    Route,
     useLocation,
     useParams,
     useRouteMatch,
 } from "react-router-dom";
+import {Link} from "react-router-dom";
 import styled from "styled-components";
-import {fetchCoinInfo, fetchCoinTichers} from "../api";
+import {fetchCoinInfo, fetchCoinTickers} from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
+
 const Title = styled.h1`
     font-size: 48px;
     color: ${(props) => props.theme.accentColor};
 `;
+
 const Loader = styled.span`
     text-align: center;
     display: block;
 `;
+
 const Container = styled.div`
     padding: 0px 20px;
     max-width: 480px;
     margin: 0 auto;
 `;
+
 const Header = styled.header`
     height: 15vh;
     display: flex;
     justify-content: center;
     align-items: center;
 `;
+
 const Overview = styled.div`
     display: flex;
     justify-content: space-between;
@@ -67,7 +71,6 @@ const Tab = styled.span<{isActive: boolean}>`
     font-size: 12px;
     font-weight: 400;
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 7px 0px;
     border-radius: 10px;
     color: ${(props) =>
         props.isActive ? props.theme.accentColor : props.theme.textColor};
@@ -77,13 +80,12 @@ const Tab = styled.span<{isActive: boolean}>`
     }
 `;
 
-interface RouteParam {
+interface RouteParams {
     coinId: string;
 }
 interface RouteState {
     name: string;
 }
-
 interface InfoData {
     id: string;
     name: string;
@@ -139,8 +141,10 @@ interface PriceData {
     };
 }
 
-function Coins() {
-    const {coinId} = useParams<RouteParam>();
+// npm install --save react-apexcharts apexcharts 차트
+
+function Coin() {
+    const {coinId} = useParams<RouteParams>();
     const {state} = useLocation<RouteState>();
     const priceMatch = useRouteMatch("/:coinId/price");
     const chartMatch = useRouteMatch("/:coinId/chart");
@@ -150,7 +154,7 @@ function Coins() {
     );
     const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(
         ["tickers", coinId],
-        () => fetchCoinTichers(coinId)
+        () => fetchCoinTickers(coinId)
     );
 
     const loading = infoLoading || tickersLoading;
@@ -178,8 +182,11 @@ function Coins() {
                             <span>Symbol:</span>
                             <span>${infoData?.symbol}</span>
                         </OverviewItem>
+                        <OverviewItem>
+                            <span>Open Source:</span>
+                            <span>{infoData?.open_source ? "Yes" : "No"}</span>
+                        </OverviewItem>
                     </Overview>
-
                     <Description>{infoData?.description}</Description>
                     <Overview>
                         <OverviewItem>
@@ -187,14 +194,11 @@ function Coins() {
                             <span>{tickersData?.total_supply}</span>
                         </OverviewItem>
                         <OverviewItem>
-                            <span>Max Suply:</span>
-                            <span>{tickersData?.total_supply}</span>
+                            <span>Max Supply:</span>
+                            <span>{tickersData?.max_supply}</span>
                         </OverviewItem>
                     </Overview>
 
-                    {/* 
-react-router 6버전에서는 useRouteMatch()가 사라지고 useMatch() 를 이용
-그리고 6버전에서는 Switch 가 Routes 로 변경됐고 대신 Outlet을 사용하면 nested router를 쉽게 이용 가능 */}
                     <Tabs>
                         <Tab isActive={chartMatch !== null}>
                             <Link to={`/${coinId}/chart`}>Chart</Link>
@@ -203,12 +207,13 @@ react-router 6버전에서는 useRouteMatch()가 사라지고 useMatch() 를 이
                             <Link to={`/${coinId}/price`}>Price</Link>
                         </Tab>
                     </Tabs>
+
                     <Switch>
                         <Route path={`/:coinId/price`}>
                             <Price />
                         </Route>
                         <Route path={`/:coinId/chart`}>
-                            <Chart />
+                            <Chart coinId={coinId} />
                         </Route>
                     </Switch>
                 </>
@@ -216,5 +221,4 @@ react-router 6버전에서는 useRouteMatch()가 사라지고 useMatch() 를 이
         </Container>
     );
 }
-
-export default Coins;
+export default Coin;
